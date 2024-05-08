@@ -303,7 +303,7 @@ function AllTypeEmployeeReport() {
 }
 
 AllTypeEmployeeReport.layout = (page) => (
-    <MainLayout children={page} title="E-SHOP || Add Shift" />
+    <MainLayout children={page} title="KEOS MAIL VERIFY || Add Shift" />
 );
 
 export default AllTypeEmployeeReport;

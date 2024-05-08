@@ -48,6 +48,6 @@ function Index() {
     );
 }
 
-Index.layout = (page) => <MainLayout children={page} title="E-SHOP || Admin Dashboard" />;
+Index.layout = (page) => <MainLayout children={page} title="KEOS MAIL VERIFY || Admin Dashboard" />;
 
 export default Index;
