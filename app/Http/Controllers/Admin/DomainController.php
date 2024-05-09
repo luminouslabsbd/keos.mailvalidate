@@ -33,6 +33,19 @@ class DomainController extends Controller
         return to_route('admin.domains')->with('success', $result['message']);
     }
 
+    public function domainEdit($id){
+        $domain = DB::table('domains')->where('id',$id)->first();
+        return Inertia::render('Module/Domain/Create', [
+            'domain' => $domain
+        ]);
+    }
+
+    public function domainUpdate($request){
+        dd($request);
+        $result = $this->DomainRepository->store($request);
+        return to_route('admin.domains')->with('success', $result['message']);
+    }
+
     public function domainStatus(Request $request){
         $message = $this->DomainRepository->statusUpdate($request);
         return back()->with('success', $message['message']);

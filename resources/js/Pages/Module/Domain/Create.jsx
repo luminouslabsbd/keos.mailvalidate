@@ -1,14 +1,25 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import React, { useState } from 'react'
+import React, { useState , useEffect} from 'react'
 import MainLayout from '../../Layout/Mainlayout';
 import { useForm } from "react-hook-form"
 
 function Create() {
-    const [inputValue, setInputValue] = useState("");
     const { register: addRegister, handleSubmit: handleAddSubmit, formState: addFormState, reset: addReset } = useForm();
-    const { base_url } = usePage().props;
-    const onSubmit = (data) => {
+    const { domain, base_url } = usePage().props;
+    const isUpdate = !!domain;
+
+    // State variables to track input field values
+    const [domainValue, setDomainValue] = useState(isUpdate ? (domain ? domain.domain : "") : "");
+    const [usernameValue, setUsernameValue] = useState(isUpdate ? (domain ? domain.user_name : "") : "");
+    const [userPassValue, setUserPassValue] = useState(isUpdate ? (domain ? domain.user_pass : "") : "");
+
+    const handleAdd = (data) => {
         router.post("/admin/domain/store", data);
+    };
+
+    const handleUpdate = (data) => {
+        console.log(data);
+        router.post("/admin/domain/update", data);
     };
 
     return (
@@ -27,7 +38,7 @@ function Create() {
                                 <Link href={`${base_url}/admin/dashboard`} className="text-[#ff6243] hover:underline">Dashboard</Link>
                             </li>
                             <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                                <span>Domain Create</span>
+                                <span>{isUpdate ? 'Domain Update' : 'Domain Create'}</span>
                             </li>
                         </ul>
                     </div>
@@ -38,18 +49,18 @@ function Create() {
                 <div className="col-span-12 pt-4">
                     <div className="panel">
                         <div className="mb-2">
-                            <h5 className="mb-2 font-bold">Add New Domain</h5>
+                            <h5 className="mb-2 font-bold">{isUpdate ? 'Domain Update' : 'Add New Domain'}</h5>
                             <hr/>
                         </div>
-                        <form onSubmit={handleAddSubmit(onSubmit)} method="post">
+                        <form onSubmit={isUpdate ? handleAddSubmit(handleUpdate) : handleAddSubmit(handleAdd)} method="post">
                             <label className="font-normal">Domain name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your domain name"/>
+                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" value={domainValue} onChange={(e) => setDomainValue(e.target.value)} placeholder="Enter your domain name"/>
                             {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
                             <label className="font-normal pt-2">Username</label>
-                            <input type="text" {...addRegister("user_name", { required: "User name is required" })} className="form-input" placeholder="Enter your username"/>
+                            <input type="text" {...addRegister("user_name", { required: "User name is required" })} className="form-input" value={usernameValue} onChange={(e) => setUsernameValue(e.target.value)}  placeholder="Enter your username"/>
                             {addFormState.errors.user_name && <p className="text-red-500" role="alert">{addFormState.errors.user_name.message}</p>}
                             <label className="font-normal pt-2">User password</label>
-                            <input type="text" {...addRegister("user_pass", { required: "User password is required" })} className="form-input" placeholder="Enter your password name" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+                            <input type="text" {...addRegister("user_pass", { required: "User password is required" })} className="form-input" value={userPassValue} onChange={(e) => setUserPassValue(e.target.value)}  placeholder="Enter your password name"/>
                             {addFormState.errors.user_pass && <p className="text-red-500" role="alert">{addFormState.errors.user_pass.message}</p>}
 
                             <button type="submit" className="btn btn-success mt-6">Submit</button>

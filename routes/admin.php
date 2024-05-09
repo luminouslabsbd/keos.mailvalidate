@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth:admin'],'as' =>'admin.'],function() {
         Route::get('/domains', [DomainController::class, 'index'])->name('domains');
         Route::get('/create', [DomainController::class, 'domainCreate'])->name('domain.create');
         Route::post('/store', [DomainController::class, 'domainStore'])->name('domain.store');
+        Route::post('/edit/{id}', [DomainController::class, 'domainEdit'])->name('domain.edit');
+        Route::post('/update', [DomainController::class, 'domainUpdate'])->name('domain.update');
         Route::post('/status', [DomainController::class, 'domainStatus'])->name('domain.status');
         Route::delete('/delete/{id}', [DomainController::class, 'domainDelete'])->name('domain.delete');
     });

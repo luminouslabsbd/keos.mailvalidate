@@ -9,9 +9,10 @@ function Index() {
         router.get(`/admin/domain/create`);
     };
 
-    const handleEdit = (domain) => {
-
+    const handleEdit = (id) => {
+        router.post(`/admin/domain/edit/${id}`);
     };
+
     const handleDelete = (id) => {
         if (confirm('Are you sure you want to delete this domain?')) {
             router.delete(`/admin/domain/delete/${id}`);
@@ -69,6 +70,7 @@ function Index() {
                                     <th>Domain name</th>
                                     <th>Username</th>
                                     <th>User password</th>
+                                    <th>Project Id</th>
                                     <th>Status</th>
                                     <th className="!text-right">Action</th>
                                 </tr>
@@ -80,6 +82,7 @@ function Index() {
                                         <td>{domain.domain}</td>
                                         <td>{domain.user_name}</td>
                                         <td>{domain.user_pass}</td>
+                                        <td>{domain.project_id}</td>
                                         <td>
                                             <label className="w-12 h-6 relative">
                                                 <input
@@ -94,7 +97,7 @@ function Index() {
                                         </td>
                                         <td className="!tex-right">
                                             <div className="flex justify-end">
-                                                <a href="#" className="inline-block px-2 py-1 leading-none border border-blue-500 text-blue-500 rounded-md hover:text-white hover:bg-blue-500 mr-2" title="Edit" onClick={() => handleEdit(domain)}>
+                                                <a href="#" className="inline-block px-2 py-1 leading-none border border-blue-500 text-blue-500 rounded-md hover:text-white hover:bg-blue-500 mr-2" title="Edit" onClick={() => handleEdit(domain.id)}>
                                                     <i className="las la-edit"></i>Edit
                                                 </a>
                                                 <a href="#" className="inline-block px-2 py-1 leading-none border border-red-500 text-red-500 rounded-md hover:text-white hover:bg-red-500 mr-2" title="Delete" onClick={() => handleDelete(domain.id)}>

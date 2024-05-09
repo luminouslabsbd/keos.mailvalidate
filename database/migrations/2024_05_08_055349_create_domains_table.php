@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('user_pass')->nullable();
             $table->string('avatar')->nullable();
             $table->integer('status')->default(1);
+            $table->string('project_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });

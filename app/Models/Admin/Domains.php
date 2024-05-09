@@ -14,5 +14,6 @@ class Domains extends Model
         'user_name',
         'user_pass',
         'status',
+        'project_id',
     ];
 }
