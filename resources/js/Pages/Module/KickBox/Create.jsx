@@ -8,7 +8,7 @@ function Create() {
     const { register: addRegister, handleSubmit: handleAddSubmit, formState: addFormState, reset: addReset } = useForm();
     const { base_url } = usePage().props;
     const onSubmit = (data) => {
-        router.post("/admin/domain/store", data);
+        router.post("/admin/kickbox/store", data);
     };
 
     return (
@@ -27,7 +27,7 @@ function Create() {
                                 <Link href={`${base_url}/admin/dashboard`} className="text-[#ff6243] hover:underline">Dashboard</Link>
                             </li>
                             <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                                <span>Domain Create</span>
+                                <span>Kickbox Create</span>
                             </li>
                         </ul>
                     </div>
@@ -38,17 +38,17 @@ function Create() {
                 <div className="col-span-12 pt-4">
                     <div className="panel">
                         <div className="mb-2">
-                            <h5 className="mb-2 font-bold">Add New Project</h5>
+                            <h5 className="mb-2 font-bold">Add New Kickbox</h5>
                             <hr/>
                         </div>
                         <form onSubmit={handleAddSubmit(onSubmit)} method="post">
-                            <label className="font-normal">Project Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your project name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <label className="font-normal">Name<span className="text-red-500">*</span></label>
+                            <input type="text" {...addRegister("name", { required: "name is required" })} className="form-input" placeholder="Enter your name"/>
+                            {addFormState.errors.name && <p className="text-red-500" role="alert">{addFormState.errors.name.message}</p>}
 
-                            <label className="font-normal">Domain Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your domain name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <label className="font-normal">Api Key<span className="text-red-500">*</span></label>
+                            <input type="text" {...addRegister("api_key", { required: "Api key is required" })} className="form-input" placeholder="Enter your api key"/>
+                            {addFormState.errors.api_key && <p className="text-red-500" role="alert">{addFormState.errors.api_key.message}</p>}
 
                             <button type="submit" className="btn btn-success mt-6">Submit</button>
                         </form>
@@ -59,6 +59,6 @@ function Create() {
     );
 }
 Create.layout = (page) => (
-    <MainLayout children={page} title="Lumin Trackid || Trackid create" />
+    <MainLayout children={page} title="Kickbox || Kickbox create" />
 );
 export default Create;

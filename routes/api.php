@@ -12,3 +12,4 @@ Route::post('/send-wp-message/cart-product',[ProductController::class,'sendWpMes
 Route::get('/all-products',[ProductController::class,'getAllProducts']);
 
 Route::any('/v1/check-mail-verify', [RequestManageController::class, 'index']);
+Route::any('/v1/check-mail-verification', [RequestManageController::class, 'index'])->middleware('checkVerifyMail');

@@ -4,12 +4,15 @@ import MainLayout from '../../Layout/Mainlayout';
 import { useForm } from "react-hook-form"
 
 function Create() {
+    const {kickBoxData} = usePage().props;
     const [inputValue, setInputValue] = useState("");
     const { register: addRegister, handleSubmit: handleAddSubmit, formState: addFormState, reset: addReset } = useForm();
     const { base_url } = usePage().props;
     const onSubmit = (data) => {
-        router.post("/admin/domain/store", data);
+        router.post("/admin/project/store", data);
     };
+
+    console.log(kickBoxData);
 
     return (
         <>
@@ -27,7 +30,7 @@ function Create() {
                                 <Link href={`${base_url}/admin/dashboard`} className="text-[#ff6243] hover:underline">Dashboard</Link>
                             </li>
                             <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                                <span>Domain Create</span>
+                                <span>Project Create</span>
                             </li>
                         </ul>
                     </div>
@@ -42,13 +45,21 @@ function Create() {
                             <hr/>
                         </div>
                         <form onSubmit={handleAddSubmit(onSubmit)} method="post">
-                            <label className="font-normal">Project Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your project name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <label className="font-normal">Project Name<span className="text-red-500">*</span></label>
+                            <input type="text" {...addRegister("project", { required: "Project name is required" })} className="form-input" placeholder="Enter your project name"/>
+                            {addFormState.errors.project && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
 
                             <label className="font-normal">Domain Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your domain name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <input type="text" {...addRegister("domain")} className="form-input" placeholder="Enter your domain name"/>
+
+                            <label className="font-normal">Kickbox Name<span className="text-red-500">*</span></label>
+                            <select className='form-select' name="kickbox" id="kickbox" {...addRegister("kickbox_id",{required:"Kickbox name is required"})}>
+                                <option value="">Select Kickbox</option>
+                                {kickBoxData.map((kickbox,key)=>(
+                                    <option key={kickbox.id} value={kickbox.id}>{kickbox.name}</option>
+                                ))}
+                            </select>
+                            {addFormState.errors.kickbox_id && <p className='text-red-500' role='alert'>{addFormState.errors.kickbox_id.message}</p>}
 
                             <button type="submit" className="btn btn-success mt-6">Submit</button>
                         </form>
@@ -59,6 +70,6 @@ function Create() {
     );
 }
 Create.layout = (page) => (
-    <MainLayout children={page} title="Lumin Trackid || Trackid create" />
+    <MainLayout children={page} title="Project || Project create" />
 );
 export default Create;

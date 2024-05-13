@@ -3,13 +3,22 @@ import React, { useState } from 'react'
 import MainLayout from '../../Layout/Mainlayout';
 import { useForm } from "react-hook-form"
 
-function Create() {
-    const [inputValue, setInputValue] = useState("");
-    const { register: addRegister, handleSubmit: handleAddSubmit, formState: addFormState, reset: addReset } = useForm();
-    const { base_url } = usePage().props;
+function Edit() {
+    const {base_url ,result, kickBox } = usePage().props;
+    // const { register: addRegister, handleSubmit: handleAddSubmit, formState: addFormState, reset: addReset } = useForm();
+    const { register, handleSubmit: handleAddSubmit,formState: addFormState } = useForm({
+        defaultValues : {
+            id:result.id,
+            domain:result.domain_name,
+            project:result.project_name,
+        }
+    });
+
     const onSubmit = (data) => {
-        router.post("/admin/domain/store", data);
+        router.post("/admin/project/update", data);
     };
+
+    console.log(kickBox,result);
 
     return (
         <>
@@ -27,7 +36,7 @@ function Create() {
                                 <Link href={`${base_url}/admin/dashboard`} className="text-[#ff6243] hover:underline">Dashboard</Link>
                             </li>
                             <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                                <span>Domain Create</span>
+                                <span>Project Create</span>
                             </li>
                         </ul>
                     </div>
@@ -43,13 +52,20 @@ function Create() {
                         </div>
                         <form onSubmit={handleAddSubmit(onSubmit)} method="post">
                             <label className="font-normal">Project Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your project name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <input type="text" {...register("project", { required: "Project name is required" })} className="form-input" placeholder="Enter your project name"/>
+                            {addFormState.errors.project && <p className="text-red-500" role="alert">{addFormState.errors.project.message}</p>}
 
                             <label className="font-normal">Domain Name</label>
-                            <input type="text" {...addRegister("domain", { required: "Domain name is required" })} className="form-input" placeholder="Enter your domain name"/>
-                            {addFormState.errors.domain && <p className="text-red-500" role="alert">{addFormState.errors.domain.message}</p>}
+                            <input type="text" {...register("domain")} className="form-input" placeholder="Enter your domain name"/>
 
+                            <label className="font-normal">Kickbox Name</label>
+                            <select className='form-select' name="kickbox" id="kickbox" {...register("kickbox_id",{required:"Kickbox name is required"})}>
+                                <option value="">Select Kickbox</option>
+                                {kickBox.map((kickbox,key)=>(
+
+                                    <option key={kickbox.id} value={kickbox.id} selected={kickbox.id===result.kickbox_id} style={kickbox.id === result.kickbox_id ? {backgroundColor: 'lightblue'} : null}>{kickbox.name}</option>
+                                ))}
+                            </select>
                             <button type="submit" className="btn btn-success mt-6">Submit</button>
                         </form>
                     </div>
@@ -58,7 +74,7 @@ function Create() {
         </>
     );
 }
-Create.layout = (page) => (
-    <MainLayout children={page} title="Lumin Trackid || Trackid create" />
+Edit.layout = (page) => (
+    <MainLayout children={page} title="Project || Project Edit" />
 );
-export default Create;
+export default Edit;

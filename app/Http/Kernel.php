@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // ...
         'permissions' => \App\Http\Middleware\PermissionsMiddleware::class,
+        'checkVerifyMail' => \App\Http\Middleware\ValidateEmail::class
     ];
 }

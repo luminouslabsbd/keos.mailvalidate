@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('kickboxes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
-            $table->integer('parent_id')->nullable();
-            $table->string('thumbnail')->nullable();
-            $table->tinyInteger('status')->default(1);
-            $table->softDeletes();
+            $table->string('api_key');
+            $table->tinyInteger('status');
+            $table->string('created_by');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('kickboxes');
     }
 };

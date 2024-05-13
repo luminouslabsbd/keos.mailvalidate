@@ -15,11 +15,6 @@ class RequestManageController extends Controller
 
     public function index(Request $request){
 
-        // Check if email and project_id are both present and not null
-        if (empty($request->email) || empty($request->project_id) ) {
-            return response()->json(['error' => 'Both email and project_id are required'], Response::HTTP_BAD_REQUEST);
-        } 
-
         $destinon = $request->email;
         $correoarr = array_map('trim', explode(",", $destinon));
 
@@ -27,7 +22,7 @@ class RequestManageController extends Controller
         $finalResults = [];
         $emailsToInsert = [];
         $now = Carbon::now();
-    
+
         if(is_array($correoarr)){
             $allEmails = EmailListData::where('project_id',$request->project_id)->whereIn('email',$correoarr)->get();
             $emailExists = $allEmails->pluck('email')->toArray();
@@ -35,12 +30,12 @@ class RequestManageController extends Controller
             $allEmails = [] ;
             $emailExists = [];
         }
-    
+
         foreach ($correoarr as $email) {
-    
+
             $systemStatus = 0;
             $comments = "Bad email";
-    
+
             $result = [
                 'email' => $email,
                 'domain_valid' => false,
@@ -49,48 +44,48 @@ class RequestManageController extends Controller
                 'good_email' => false,
                 'kickbox' => 'No Response',
             ];
-    
+
             $final = [
                 'email' =>$email,
                 'status' => false,
             ];
-    
+
             if(!in_array($email,$emailExists)){
-    
+
                 // Validate email format
                 $result['format_valid'] = $this->isEmailFormatValid($email);
-    
+
                 // Validate domain
                 if ($result['format_valid']) {
                     $result['domain_valid'] = $this->isValidDomain($email);
                 }
-    
+
                 // Validate email address
                 if ($result['format_valid'] && $result['domain_valid']) {
                     $result['email_valid'] = $this->isEmailNameValid($email);
                 }
-    
+
                 // Check if email is good
                 if ($result['format_valid'] && $result['domain_valid'] && $result['email_valid']) {
                     $result['good_email'] = $this->isEmailGood($email);
                 }
-    
-                if($result['good_email']){ 
-    
-                    // Send to API Request To KickBox 
-                    $apiResponse = $this->sendKickBox($email);
-    
+
+                if($result['good_email']){
+
+                    // Send to API Request To KickBox
+                    $apiResponse = $this->sendKickBox($email,$request->api_key);
+
                     $systemStatus = isset($apiResponse['status']) ? $apiResponse['status'] : 1 ;
                     $comments = isset($apiResponse['comments']) ? $apiResponse['comments'] : "Good email";
                     $final['status'] = $apiResponse['status'] ;
                     $result['kickbox'] = $apiResponse ;
-    
+
                 }else{
                     $systemStatus = 0 ;
                     $comments = "Bad Email";
                     $final['status'] = 0 ;
                 }
-                
+
                 // Prepare data to insert
                 $emailsToInsert[] = [
                     'project_id' => $request->project_id,
@@ -101,7 +96,7 @@ class RequestManageController extends Controller
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
-                
+
             }else{
                 $emailData = $allEmails->where('email',$email)->first();
                 if($emailData){
@@ -115,11 +110,11 @@ class RequestManageController extends Controller
                     $final['status'] = 0 ;
                 }
             }
-    
+
             // Add result to the results array
             $finalResults[] = $final;
         }
-    
+
         // Insert or update all emails at once
         EmailListData::insert($emailsToInsert);
 
@@ -131,12 +126,10 @@ class RequestManageController extends Controller
 
         // return response()->json(, Response::HTTP_OK);
     }
-    
-    public function sendKickBox($email){
 
+    public function sendKickBox($email,$apikey){
         $result = [];
-        $url = "https://api.kickbox.com/v2/verify";
-        $apikey =  "live_c2d0e7f2d10a5b6f4afeeda86006348ceba3f92b70ceb1824ea7533171d45a32"; 
+        $url = env('KICKBOX_API_URL');
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -153,7 +146,7 @@ class RequestManageController extends Controller
         $response = curl_exec($curl);
 
         $responseData = json_decode($response, true);
-        
+
         if ($responseData['success']) {
             $reason = $responseData['reason'];
 
@@ -220,7 +213,7 @@ class RequestManageController extends Controller
     {
      return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
- 
+
      /**
       * Check if the domain of the email address has valid MX records.
       *
@@ -232,7 +225,7 @@ class RequestManageController extends Controller
         $domain = substr($email, strpos($email, '@') + 1);
         return checkdnsrr($domain, 'MX');
     }
- 
+
      /**
       * Check if the email address before @ is valid or meaningful.
       *
@@ -246,7 +239,7 @@ class RequestManageController extends Controller
         // For example, check if it contains valid characters or meets certain criteria
         return true; // Placeholder return value
     }
- 
+
      /**
       * Check if the email address is valid or bad.
       *
